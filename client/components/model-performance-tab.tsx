@@ -1,108 +1,118 @@
 "use client"
 
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-const qsvmMetrics = {
-  precision: 0.967,
-  recall: 0.943,
-  f1Score: 0.955,
-  confusionMatrix: {
-    truePositive: 1834,
-    falsePositive: 62,
-    trueNegative: 18456,
-    falseNegative: 108,
-  },
-}
-
-const isolationForestMetrics = {
-  precision: 0.892,
-  recall: 0.878,
-  f1Score: 0.885,
-  confusionMatrix: {
-    truePositive: 1708,
-    falsePositive: 206,
-    trueNegative: 18312,
-    falseNegative: 234,
-  },
-}
-
-function ConfusionMatrix({ data }: { data: typeof qsvmMetrics.confusionMatrix }) {
-  const total = data.truePositive + data.falsePositive + data.trueNegative + data.falseNegative
-
-  return (
-    <div className="grid grid-cols-2 gap-2 max-w-sm">
-      <div className="col-span-2 grid grid-cols-2 gap-2 text-xs text-muted-foreground mb-2">
-        <div></div>
-        <div className="text-center">Predicted Positive</div>
-        <div className="text-center">Predicted Negative</div>
-      </div>
-      <div className="text-xs text-muted-foreground flex items-center">Actual Positive</div>
-      <div className="bg-accent/20 border border-accent rounded p-4 text-center">
-        <div className="text-2xl font-bold text-foreground">{data.truePositive}</div>
-        <div className="text-xs text-muted-foreground">True Positive</div>
-      </div>
-      <div className="bg-destructive/20 border border-destructive rounded p-4 text-center">
-        <div className="text-2xl font-bold text-foreground">{data.falseNegative}</div>
-        <div className="text-xs text-muted-foreground">False Negative</div>
-      </div>
-      <div className="text-xs text-muted-foreground flex items-center">Actual Negative</div>
-      <div className="bg-destructive/20 border border-destructive rounded p-4 text-center">
-        <div className="text-2xl font-bold text-foreground">{data.falsePositive}</div>
-        <div className="text-xs text-muted-foreground">False Positive</div>
-      </div>
-      <div className="bg-accent/20 border border-accent rounded p-4 text-center">
-        <div className="text-2xl font-bold text-foreground">{data.trueNegative}</div>
-        <div className="text-xs text-muted-foreground">True Negative</div>
-      </div>
-    </div>
-  )
-}
-
-function MetricsDisplay({ metrics }: { metrics: typeof qsvmMetrics }) {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-muted rounded-lg p-4">
-          <p className="text-sm text-muted-foreground mb-1">Precision</p>
-          <p className="text-2xl font-bold text-foreground">{(metrics.precision * 100).toFixed(1)}%</p>
-        </div>
-        <div className="bg-muted rounded-lg p-4">
-          <p className="text-sm text-muted-foreground mb-1">Recall</p>
-          <p className="text-2xl font-bold text-foreground">{(metrics.recall * 100).toFixed(1)}%</p>
-        </div>
-        <div className="bg-muted rounded-lg p-4">
-          <p className="text-sm text-muted-foreground mb-1">F1-Score</p>
-          <p className="text-2xl font-bold text-foreground">{(metrics.f1Score * 100).toFixed(1)}%</p>
-        </div>
-      </div>
-      <div>
-        <h4 className="text-sm font-medium text-foreground mb-3">Confusion Matrix</h4>
-        <ConfusionMatrix data={metrics.confusionMatrix} />
-      </div>
-    </div>
-  )
-}
+const metrics = [
+  "General Performance",
+  "ROC Curve",
+  "Precision-Recall Curve",
+  "Validation Curve",
+  "Calibration Curve",
+  "Cumulative Gain and Lift Chart",
+  "Cross-Validation Curve",
+]
 
 export function ModelPerformanceTab() {
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
+    <div className="space-y-10">
       <Card className="bg-card border-border">
         <CardHeader>
-          <CardTitle className="text-card-foreground">QSVM Performance</CardTitle>
-          <p className="text-sm text-muted-foreground">Quantum Support Vector Machine</p>
+          <CardTitle className="text-card-foreground text-xl font-semibold">
+            Model Performance Comparison — VQC (PennyLane) vs CNN
+          </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Comparative visualization of classical and quantum models trained on CIC-IDS-2018 dataset
+          </p>
         </CardHeader>
-        <CardContent>
-          <MetricsDisplay metrics={qsvmMetrics} />
-        </CardContent>
-      </Card>
 
-      <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle className="text-card-foreground">Isolation Forest Performance</CardTitle>
-          <p className="text-sm text-muted-foreground">Classical Machine Learning Model</p>
-        </CardHeader>
-        <CardContent>
-          <MetricsDisplay metrics={isolationForestMetrics} />
+        <CardContent className="space-y-12">
+          {metrics.map((metric) => (
+            <div key={metric} className="space-y-4">
+              <h4 className="text-lg font-semibold text-foreground">{metric}</h4>
+
+              {/* Two-column comparison layout */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* VQC Panel */}
+                <Card className="bg-muted/10 border border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground text-base font-medium">
+                      VQC (PennyLane)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {metric === "General Performance" ? (
+                      <div className="space-y-4 text-sm text-muted-foreground">
+                        <p><strong>Accuracy:</strong> —</p>
+                        <p><strong>Precision:</strong> —</p>
+                        <p><strong>Recall:</strong> —</p>
+                        <p><strong>F1-Score:</strong> —</p>
+                        <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                          <Image
+                            src="/vqc-performance.jpg"
+                            alt="VQC general performance"
+                            fill
+                            className="object-contain bg-muted"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                        <Image
+                          src={`/vqc-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
+                          alt={`${metric} (VQC)`}
+                          fill
+                          className="object-contain bg-muted"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* CNN Panel */}
+                <Card className="bg-muted/10 border border-border">
+                  <CardHeader>
+                    <CardTitle className="text-foreground text-base font-medium">
+                      CNN (Classical)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {metric === "General Performance" ? (
+                      <div className="space-y-4 text-sm text-muted-foreground">
+                        <p><strong>Accuracy:</strong> —</p>
+                        <p><strong>Precision:</strong> —</p>
+                        <p><strong>Recall:</strong> —</p>
+                        <p><strong>F1-Score:</strong> —</p>
+                        <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                          <Image
+                            src="/cnn-performance.jpg"
+                            alt="CNN general performance"
+                            fill
+                            className="object-contain bg-muted"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                        <Image
+                          src={`/cnn-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
+                          alt={`${metric} (CNN)`}
+                          fill
+                          className="object-contain bg-muted"
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          ))}
+
+          <div className="pt-6 text-center border-t border-border">
+            <p className="text-sm text-muted-foreground italic">
+              Analysis conducted using the CIC-IDS-2018 dataset
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
