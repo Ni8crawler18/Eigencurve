@@ -13,22 +13,10 @@ interface FlowClassification {
   srcIp: string
   dstIp: string
   protocol: string
-  confidence: number
+  duration: number
+  bytes: number
+  packets: number
   verdict: "Malware" | "Benign"
-}
-
-const generateMockFlow = (): FlowClassification => {
-  const protocols = ["TCP", "UDP", "ICMP"]
-  const ismalware = Math.random() < 0.15
-
-  return {
-    timestamp: new Date().toLocaleTimeString(),
-    srcIp: `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`,
-    dstIp: `${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`,
-    protocol: protocols[Math.floor(Math.random() * protocols.length)],
-    confidence: ismalware ? 85 + Math.random() * 15 : 90 + Math.random() * 10,
-    verdict: ismalware ? "Malware" : "Benign",
-  }
 }
 
 export function LiveClassificationTab() {
@@ -39,11 +27,40 @@ export function LiveClassificationTab() {
   useEffect(() => {
     if (isPaused) return
 
-    const interval = setInterval(() => {
-      setFlows((prev) => [generateMockFlow(), ...prev].slice(0, 100))
-    }, 2000)
+    const evtSource = new EventSource("/api/stream")
 
-    return () => clearInterval(interval)
+    evtSource.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data)
+        const flow: FlowClassification = {
+          timestamp: new Date().toLocaleTimeString(),
+          srcIp: data.src_ip,
+          dstIp: data.dst_ip,
+          protocol:
+            data.protocol === 6
+              ? "TCP"
+              : data.protocol === 17
+              ? "UDP"
+              : data.protocol === 1
+              ? "ICMP"
+              : String(data.protocol),
+          duration: data.duration_ms,
+          bytes: data.bytes,
+          packets: data.packets,
+          verdict: data.bytes > 90000 || data.duration_ms > 50000 ? "Malware" : "Benign",
+        }
+
+        setFlows((prev) => [flow, ...prev].slice(0, 100))
+      } catch (err) {
+        console.error("Bad JSON:", err)
+      }
+    }
+
+    evtSource.onerror = (err) => {
+      console.error("SSE error:", err)
+    }
+
+    return () => evtSource.close()
   }, [isPaused])
 
   const filteredFlows = flows.filter(
@@ -58,7 +75,7 @@ export function LiveClassificationTab() {
     <Card className="bg-card border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-card-foreground">Real-Time Flow Classification</CardTitle>
+          <CardTitle className="text-card-foreground">Live Network Flow Stream</CardTitle>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Switch id="pause-feed" checked={isPaused} onCheckedChange={setIsPaused} />
@@ -97,7 +114,13 @@ export function LiveClassificationTab() {
                     Protocol
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    Confidence
+                    Duration (ms)
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Bytes
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                    Packets
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Verdict
@@ -107,11 +130,13 @@ export function LiveClassificationTab() {
               <tbody className="divide-y divide-border">
                 {filteredFlows.map((flow, idx) => (
                   <tr key={idx} className="hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-3 text-sm text-foreground font-mono">{flow.timestamp}</td>
-                    <td className="px-4 py-3 text-sm text-foreground font-mono">{flow.srcIp}</td>
-                    <td className="px-4 py-3 text-sm text-foreground font-mono">{flow.dstIp}</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{flow.protocol}</td>
-                    <td className="px-4 py-3 text-sm text-foreground">{flow.confidence.toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-sm font-mono">{flow.timestamp}</td>
+                    <td className="px-4 py-3 text-sm font-mono">{flow.srcIp}</td>
+                    <td className="px-4 py-3 text-sm font-mono">{flow.dstIp}</td>
+                    <td className="px-4 py-3 text-sm">{flow.protocol}</td>
+                    <td className="px-4 py-3 text-sm">{flow.duration}</td>
+                    <td className="px-4 py-3 text-sm">{flow.bytes}</td>
+                    <td className="px-4 py-3 text-sm">{flow.packets}</td>
                     <td className="px-4 py-3">
                       <Badge
                         variant={flow.verdict === "Malware" ? "destructive" : "secondary"}

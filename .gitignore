@@ -3,4 +3,7 @@ data
 test
 node_modules
 pass.txt
-
+__pycache__
+*.log
+*.jsonl
+*.csv
