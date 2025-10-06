@@ -34,35 +34,37 @@ export function ModelPerformanceTab() {
               {/* Two-column comparison layout */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* VQC Panel */}
-                <Card className="bg-muted/10 border border-border">
-                  <CardHeader>
+                <Card className="bg-card border border-border overflow-hidden">
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-foreground text-base font-medium">
                       VQC (PennyLane)
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-0">
                     {metric === "General Performance" ? (
-                      <div className="space-y-4 text-sm text-muted-foreground">
+                      <div className="space-y-3 text-sm text-muted-foreground p-3">
                         <p><strong>Accuracy:</strong> —</p>
                         <p><strong>Precision:</strong> —</p>
                         <p><strong>Recall:</strong> —</p>
                         <p><strong>F1-Score:</strong> —</p>
-                        <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                        <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
                           <Image
                             src="/vqc-performance.jpg"
                             alt="VQC general performance"
-                            fill
-                            className="object-contain bg-muted"
+                            width={800}
+                            height={450}
+                            className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
                           />
                         </div>
                       </div>
                     ) : (
-                      <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
                         <Image
                           src={`/vqc-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
                           alt={`${metric} (VQC)`}
-                          fill
-                          className="object-contain bg-muted"
+                          width={800}
+                          height={450}
+                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
                         />
                       </div>
                     )}
@@ -70,35 +72,31 @@ export function ModelPerformanceTab() {
                 </Card>
 
                 {/* CNN Panel */}
-                <Card className="bg-muted/10 border border-border">
-                  <CardHeader>
+                <Card className="bg-card border border-border overflow-hidden">
+                  <CardHeader className="pb-2">
                     <CardTitle className="text-foreground text-base font-medium">
                       CNN (Classical)
                     </CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-0">
                     {metric === "General Performance" ? (
-                      <div className="space-y-4 text-sm text-muted-foreground">
-                        <p><strong>Accuracy:</strong> —</p>
-                        <p><strong>Precision:</strong> —</p>
-                        <p><strong>Recall:</strong> —</p>
-                        <p><strong>F1-Score:</strong> —</p>
-                        <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
-                          <Image
-                            src="/cnn-performance.jpg"
-                            alt="CNN general performance"
-                            fill
-                            className="object-contain bg-muted"
-                          />
-                        </div>
+                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
+                        <Image
+                          src="/cnn-performance.png"
+                          alt="CNN general performance"
+                          width={800}
+                          height={450}
+                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
+                        />
                       </div>
                     ) : (
-                      <div className="relative w-full aspect-[16/9] rounded-md border border-border overflow-hidden">
+                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
                         <Image
                           src={`/cnn-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
                           alt={`${metric} (CNN)`}
-                          fill
-                          className="object-contain bg-muted"
+                          width={800}
+                          height={450}
+                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
                         />
                       </div>
                     )}
