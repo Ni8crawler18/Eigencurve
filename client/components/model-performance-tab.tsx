@@ -32,7 +32,7 @@ export function ModelPerformanceTab() {
               <h4 className="text-lg font-semibold text-foreground">{metric}</h4>
 
               {/* Two-column comparison layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                 {/* VQC Panel */}
                 <Card className="bg-card border border-border overflow-hidden">
                   <CardHeader className="pb-2">
@@ -47,24 +47,27 @@ export function ModelPerformanceTab() {
                         <p><strong>Precision:</strong> —</p>
                         <p><strong>Recall:</strong> —</p>
                         <p><strong>F1-Score:</strong> —</p>
-                        <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
+                        
+                        {/* CHANGED: Removed the bordered container and used flex to position the image */}
+                        <div className="flex justify-end">
                           <Image
                             src="/vqc-performance.jpg"
                             alt="VQC general performance"
                             width={800}
                             height={450}
-                            className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
+                            className="w-auto h-auto max-w-[75%] object-contain"
                           />
                         </div>
+
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
+                      <div className="flex items-center justify-center overflow-hidden rounded-md border border-border bg-card">
                         <Image
                           src={`/vqc-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
                           alt={`${metric} (VQC)`}
                           width={800}
                           height={450}
-                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
+                          className="w-auto h-auto max-w-full object-contain bg-card"
                         />
                       </div>
                     )}
@@ -80,23 +83,23 @@ export function ModelPerformanceTab() {
                   </CardHeader>
                   <CardContent className="p-0">
                     {metric === "General Performance" ? (
-                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
+                      <div className="flex items-center justify-center overflow-hidden rounded-md border border-border bg-card">
                         <Image
                           src="/cnn-performance.png"
                           alt="CNN general performance"
                           width={800}
                           height={450}
-                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
+                          className="w-auto h-auto max-w-full object-contain bg-card"
                         />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-full overflow-hidden rounded-md border border-border bg-card">
+                      <div className="flex items-center justify-center overflow-hidden rounded-md border border-border bg-card">
                         <Image
                           src={`/cnn-${metric.toLowerCase().replace(/ /g, "-")}.jpg`}
                           alt={`${metric} (CNN)`}
                           width={800}
                           height={450}
-                          className="w-auto h-auto max-w-full max-h-[450px] object-contain bg-card"
+                          className="w-auto h-auto max-w-full object-contain bg-card"
                         />
                       </div>
                     )}
